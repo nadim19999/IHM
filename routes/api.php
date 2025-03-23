@@ -5,6 +5,8 @@ use App\Http\Controllers\FormationController;
 use App\Http\Controllers\SousCategorieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\FormationSessionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -22,7 +24,9 @@ Route::middleware('api')->group(function () {
     Route::resource('formations', FormationController::class);
 });
 
-use App\Http\Controllers\AuthController;
+Route::middleware('api')->group(function () {
+    Route::resource('formationSessions', FormationSessionController::class);
+});
 
 Route::group([
     'middleware' => 'api',
@@ -40,3 +44,5 @@ Route::get('users/verify-email', [AuthController::class, 'verifyEmail'])->name('
 Route::get('/categories/{categorieID}/sousCategories', [CategorieController::class, 'getSousCategories']);
 
 Route::get('/sousCategories/{sousCategorieID}/formations', [SousCategorieController::class, 'getFormations']);
+
+Route::get('/formations/{formationID}/formationSessions', [FormationController::class, 'getFormationSessions']);

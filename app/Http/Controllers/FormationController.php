@@ -81,4 +81,10 @@ class FormationController extends Controller
             return response()->json("Problème de suppression de la formation");
         }
     }
+
+    public function getFormationSessions($formationID)
+    {
+        $formationSessions = Formation::find($formationID)->formationSessions;
+        return response()->json($formationSessions);
+    }
 }
