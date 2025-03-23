@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nomFormation');
             $table->string('description');
             $table->string('niveau');
+            $table->string('image');
             $table->unsignedBigInteger('duree');
             
             $table->foreignId('sousCategorieID')->constrained('sous_categories')->onDelete('restrict');

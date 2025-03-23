@@ -13,6 +13,7 @@ class Formation extends Model
         'nomFormation',
         'description',
         'niveau',
+        'image',
         'duree',
         'sousCategorieID'
     ];

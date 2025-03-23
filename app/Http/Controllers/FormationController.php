@@ -30,6 +30,7 @@ class FormationController extends Controller
                 "nomFormation" => $request->input("nomFormation"),
                 "description" => $request->input("description"),
                 "niveau" => $request->input("niveau"),
+                "image" => $request->input("image"),
                 "duree" => $request->input("duree"),
                 "sousCategorieID" => $request->input("sousCategorieID")
             ]);

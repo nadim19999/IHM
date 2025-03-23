@@ -36,3 +36,7 @@ Route::group([
 });
 
 Route::get('users/verify-email', [AuthController::class, 'verifyEmail'])->name('verify.adresseMail');
+
+Route::get('/categories/{categorieID}/sousCategories', [CategorieController::class, 'getSousCategories']);
+
+Route::get('/sousCategories/{sousCategorieID}/formations', [SousCategorieController::class, 'getFormations']);

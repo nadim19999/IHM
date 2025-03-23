@@ -76,4 +76,10 @@ class CategorieController extends Controller
             return response()->json("Problème de suppression de la catégorie");
         }
     }
+
+    public function getSousCategories($categorieID)
+    {
+        $sousCategories = Categorie::find($categorieID)->sousCategories;
+        return response()->json($sousCategories);
+    }
 }
