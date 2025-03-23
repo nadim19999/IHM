@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Formation;
+use Illuminate\Http\Request;
+
+class FormationController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        try {
+            $formations = Formation::all();
+            return response()->json($formations);
+        } catch (\Exception $e) {
+            return response()->json("Problème de récupération de la liste des formations");
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        try {
+            $formation = new Formation([
+                "nomFormation" => $request->input("nomFormation"),
+                "description" => $request->input("description"),
+                "niveau" => $request->input("niveau"),
+                "duree" => $request->input("duree"),
+                "sousCategorieID" => $request->input("sousCategorieID")
+            ]);
+            $formation->save();
+            return response()->json($formation);
+        } catch (\Exception $e) {
+            return response()->json("Insertion impossible");
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        try {
+            $formation = Formation::findOrFail($id);
+            return response()->json($formation);
+        } catch (\Exception $e) {
+            return response()->json("Problème de récupération des données");
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        try {
+            $formation = Formation::findOrFail($id);
+            $formation->update($request->all());
+            return response()->json($formation);
+        } catch (\Exception $e) {
+            return response()->json("Problème de modification");
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $formation = Formation::findOrFail($id);
+            $formation->delete();
+            return response()->json("Formation supprimée avec succès");
+        } catch (\Exception $e) {
+            return response()->json("Problème de suppression de la formation");
+        }
+    }
+}
