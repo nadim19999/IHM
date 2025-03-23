@@ -20,21 +20,33 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function login(Request $request)
-    {
-        $input = $request->only('adresseMail', 'password');
-        $jwt_token = null;
-        if (!$jwt_token = JWTAuth::attempt($input)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Adresse e-mail ou mot de passe incorrect',
-            ], Response::HTTP_UNAUTHORIZED);
-        }
+{
+    $input = $request->only('adresseMail', 'password');
+    $jwt_token = null;
+
+    if (!$jwt_token = JWTAuth::attempt($input)) {
         return response()->json([
-            'success' => true,
-            'token' => $jwt_token,
-            'user' => Auth::user(),
-        ]);
+            'success' => false,
+            'message' => 'Adresse e-mail ou mot de passe incorrect',
+        ], Response::HTTP_UNAUTHORIZED);
     }
+
+    $user = Auth::user();
+
+    if (!$user->isActive) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Votre compte n\'est pas encore activé. Veuillez vérifier votre e-mail.',
+        ], Response::HTTP_FORBIDDEN);
+    }
+    
+    return response()->json([
+        'success' => true,
+        'token' => $jwt_token,
+        'user' => $user,
+    ]);
+}
+
 
     /**
      * Inscrire un utilisateur.
