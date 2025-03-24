@@ -51,3 +51,7 @@ Route::get('/categories/{categorieID}/sousCategories', [CategorieController::cla
 Route::get('/sousCategories/{sousCategorieID}/formations', [SousCategorieController::class, 'getFormations']);
 
 Route::get('/formations/{formationID}/formationSessions', [FormationController::class, 'getFormationSessions']);
+
+Route::get('/formationSessions/{formationSessionID}/cours', [FormationSessionController::class, 'getCours']);
+
+Route::post('/formationSessions/{sessionId}/register', [FormationSessionController::class, 'registerToSession'])->middleware('auth:api');

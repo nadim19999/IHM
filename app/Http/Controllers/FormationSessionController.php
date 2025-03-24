@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\FormationSession;
+use App\Models\User;
 
 class FormationSessionController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Afficher la liste des sessions de formation.
      */
     public function index()
     {
@@ -16,12 +18,12 @@ class FormationSessionController extends Controller
             $sessions = FormationSession::all();
             return response()->json($sessions);
         } catch (\Exception $e) {
-            return response()->json("Problème de récupération de la liste des sessions de formation");
+            return response()->json("Problème de récupération de la liste des sessions de formation", 500);
         }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Ajouter une nouvelle session de formation.
      */
     public function store(Request $request)
     {
@@ -32,17 +34,18 @@ class FormationSessionController extends Controller
                 "dateDebut" => $request->input("dateDebut"),
                 "dateFin" => $request->input("dateFin"),
                 "statut" => $request->input("statut"),
-                "capacite" => $request->input("capacite")
+                "capacite" => $request->input("capacite"),
+                "nombreInscrits" => 0, // Initialisation
             ]);
             $session->save();
             return response()->json($session);
         } catch (\Exception $e) {
-            return response()->json("Insertion impossible");
+            return response()->json("Insertion impossible", 500);
         }
     }
 
     /**
-     * Display the specified resource.
+     * Afficher une session spécifique.
      */
     public function show($id)
     {
@@ -50,12 +53,12 @@ class FormationSessionController extends Controller
             $session = FormationSession::findOrFail($id);
             return response()->json($session);
         } catch (\Exception $e) {
-            return response()->json("Problème de récupération des données");
+            return response()->json("Problème de récupération des données", 404);
         }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mettre à jour une session de formation.
      */
     public function update(Request $request, $id)
     {
@@ -64,12 +67,12 @@ class FormationSessionController extends Controller
             $session->update($request->all());
             return response()->json($session);
         } catch (\Exception $e) {
-            return response()->json("Problème de modification");
+            return response()->json("Problème de modification", 500);
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprimer une session de formation.
      */
     public function destroy($id)
     {
@@ -78,13 +81,57 @@ class FormationSessionController extends Controller
             $session->delete();
             return response()->json("Session supprimée avec succès");
         } catch (\Exception $e) {
-            return response()->json("Problème de suppression de la session");
+            return response()->json("Problème de suppression de la session", 500);
         }
     }
 
+    /**
+     * Récupérer les cours d'une session de formation.
+     */
     public function getCours($formationSessionID)
     {
         $cours = FormationSession::find($formationSessionID)->cours;
         return response()->json($cours);
     }
+
+    /**
+     * Inscrire un utilisateur (candidat) à une session de formation.
+     */
+    public function registerToSession(Request $request, $sessionId)
+{
+    try {
+        /** @var \App\Models\User $user */
+        $user = Auth::user(); // Récupère l'utilisateur connecté
+
+        if (!$user) {
+            return response()->json(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        if ($user->role !== 'candidat') {
+            return response()->json(['error' => 'Seuls les candidats peuvent s\'inscrire'], 403);
+        }
+
+        $session = FormationSession::findOrFail($sessionId);
+
+        // Vérifier si la session est "Planifiée" et a encore de la place
+        if ($session->statut !== 'Planifiée') {
+            return response()->json(['error' => 'La session n\'est pas planifiée'], 400);
+        }
+        if ($session->nombreInscrits >= $session->capacite) {
+            return response()->json(['error' => 'La session est complète'], 400);
+        }
+
+        // Inscription du candidat
+        $user->formationSessionID = $sessionId;
+        $user->save(); // 🔥 Vérifie si l'erreur "save()" persiste ici
+
+        // Incrémenter le nombre d'inscrits
+        $session->increment('nombreInscrits');
+
+        return response()->json(['message' => 'Inscription réussie', 'user' => $user], 200);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Problème d\'inscription', 'details' => $e->getMessage()], 500);
+    }
+}
+
 }
