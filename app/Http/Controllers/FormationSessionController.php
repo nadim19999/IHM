@@ -91,10 +91,10 @@ class FormationSessionController extends Controller
         return response()->json($cours);
     }
 
-    public function getUsers($formationSessionID)
+    public function getCandidats($formationSessionID)
     {
-        $users = FormationSession::find($formationSessionID)->users;
-        return response()->json($users);
+        $candidats = FormationSession::find($formationSessionID)->candidats;
+        return response()->json($candidats);
     }
 
     public function registerToSession(Request $request, $sessionId)

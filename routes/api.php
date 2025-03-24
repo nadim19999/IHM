@@ -54,6 +54,8 @@ Route::get('/formations/{formationID}/formationSessions', [FormationController::
 
 Route::get('/formationSessions/{formationSessionID}/cours', [FormationSessionController::class, 'getCours']);
 
+Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessionController::class, 'getCandidats']);
+
 Route::post('/formationSessions/{sessionId}/register', [FormationSessionController::class, 'registerToSession'])->middleware('auth:api');
 
 Route::middleware('auth:api')->group(function () {
