@@ -35,7 +35,7 @@ class FormationSessionController extends Controller
                 "dateFin" => $request->input("dateFin"),
                 "statut" => $request->input("statut"),
                 "capacite" => $request->input("capacite"),
-                "nombreInscrits" => 0, // Initialisation
+                "nombreInscrits" => 0,
             ]);
             $session->save();
             return response()->json($session);
@@ -85,53 +85,44 @@ class FormationSessionController extends Controller
         }
     }
 
-    /**
-     * Récupérer les cours d'une session de formation.
-     */
     public function getCours($formationSessionID)
     {
         $cours = FormationSession::find($formationSessionID)->cours;
         return response()->json($cours);
     }
 
-    /**
-     * Inscrire un utilisateur (candidat) à une session de formation.
-     */
+
     public function registerToSession(Request $request, $sessionId)
-{
-    try {
-        /** @var \App\Models\User $user */
-        $user = Auth::user(); // Récupère l'utilisateur connecté
+    {
+        try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
 
-        if (!$user) {
-            return response()->json(['error' => 'Utilisateur non authentifié'], 401);
+            if (!$user) {
+                return response()->json(['error' => 'Utilisateur non authentifié'], 401);
+            }
+
+            if ($user->role !== 'candidat') {
+                return response()->json(['error' => 'Seuls les candidats peuvent s\'inscrire'], 403);
+            }
+
+            $session = FormationSession::findOrFail($sessionId);
+
+            if ($session->statut !== 'Planifiée') {
+                return response()->json(['error' => 'La session n\'est pas planifiée'], 400);
+            }
+            if ($session->nombreInscrits >= $session->capacite) {
+                return response()->json(['error' => 'La session est complète'], 400);
+            }
+
+            $user->formationSessionID = $sessionId;
+            $user->save();
+
+            $session->increment('nombreInscrits');
+
+            return response()->json(['message' => 'Inscription réussie', 'user' => $user], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Problème d\'inscription', 'details' => $e->getMessage()], 500);
         }
-
-        if ($user->role !== 'candidat') {
-            return response()->json(['error' => 'Seuls les candidats peuvent s\'inscrire'], 403);
-        }
-
-        $session = FormationSession::findOrFail($sessionId);
-
-        // Vérifier si la session est "Planifiée" et a encore de la place
-        if ($session->statut !== 'Planifiée') {
-            return response()->json(['error' => 'La session n\'est pas planifiée'], 400);
-        }
-        if ($session->nombreInscrits >= $session->capacite) {
-            return response()->json(['error' => 'La session est complète'], 400);
-        }
-
-        // Inscription du candidat
-        $user->formationSessionID = $sessionId;
-        $user->save(); // 🔥 Vérifie si l'erreur "save()" persiste ici
-
-        // Incrémenter le nombre d'inscrits
-        $session->increment('nombreInscrits');
-
-        return response()->json(['message' => 'Inscription réussie', 'user' => $user], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => 'Problème d\'inscription', 'details' => $e->getMessage()], 500);
     }
-}
-
 }
