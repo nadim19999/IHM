@@ -91,6 +91,11 @@ class FormationSessionController extends Controller
         return response()->json($cours);
     }
 
+    public function getUsers($formationSessionID)
+    {
+        $users = FormationSession::find($formationSessionID)->users;
+        return response()->json($users);
+    }
 
     public function registerToSession(Request $request, $sessionId)
     {
