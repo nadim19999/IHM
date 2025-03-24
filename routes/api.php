@@ -6,6 +6,7 @@ use App\Http\Controllers\SousCategorieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CoursController;
 use App\Http\Controllers\FormationSessionController;
 
 Route::get('/user', function (Request $request) {
@@ -26,6 +27,10 @@ Route::middleware('api')->group(function () {
 
 Route::middleware('api')->group(function () {
     Route::resource('formationSessions', FormationSessionController::class);
+});
+
+Route::middleware('api')->group(function () {
+    Route::resource('cours', CoursController::class);
 });
 
 Route::group([
