@@ -19,7 +19,7 @@ class FormationSession extends Model
         'formateurID'
     ];
 
-    public function formationSessions()
+    public function cours()
     {
         return $this->hasMany(Cour::class, 'formationSessionID');
     }
