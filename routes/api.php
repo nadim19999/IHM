@@ -7,8 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourController;
+use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FormationSessionController;
+use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\ReponseController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -32,6 +35,18 @@ Route::middleware('api')->group(function () {
 
 Route::middleware('api')->group(function () {
     Route::resource('feedbacks', FeedbackController::class);
+});
+
+Route::middleware('api')->group(function () {
+    Route::resource('examens', ExamenController::class);
+});
+
+Route::middleware('api')->group(function () {
+    Route::resource('questions', QuestionController::class);
+});
+
+Route::middleware('api')->group(function () {
+    Route::resource('reponses', ReponseController::class);
 });
 
 Route::middleware('api')->group(function () {
@@ -62,6 +77,10 @@ Route::get('/formationSessions/{formationSessionID}/cours', [FormationSessionCon
 Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessionController::class, 'getCandidats']);
 
 Route::get('/formationSessions/{formationSessionID}/feedbacks', [FormationSessionController::class, 'getFeedbacks']);
+
+Route::get('/examens/{examenID}/questions', [ExamenController::class, 'getQuestions']);
+
+Route::get('/questions/{questionID}/reponses', [QuestionController::class, 'getReponses']);
 
 Route::post('/formationSessions/{sessionId}/register', [FormationSessionController::class, 'registerToSession'])->middleware('auth:api');
 
