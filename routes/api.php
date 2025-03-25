@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FormationSessionController;
 
 Route::get('/user', function (Request $request) {
@@ -27,6 +28,10 @@ Route::middleware('api')->group(function () {
 
 Route::middleware('api')->group(function () {
     Route::resource('formationSessions', FormationSessionController::class);
+});
+
+Route::middleware('api')->group(function () {
+    Route::resource('feedbacks', FeedbackController::class);
 });
 
 Route::middleware('api')->group(function () {
@@ -55,6 +60,8 @@ Route::get('/formations/{formationID}/formationSessions', [FormationController::
 Route::get('/formationSessions/{formationSessionID}/cours', [FormationSessionController::class, 'getCours']);
 
 Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessionController::class, 'getCandidats']);
+
+Route::get('/formationSessions/{formationSessionID}/feedbacks', [FormationSessionController::class, 'getFeedbacks']);
 
 Route::post('/formationSessions/{sessionId}/register', [FormationSessionController::class, 'registerToSession'])->middleware('auth:api');
 

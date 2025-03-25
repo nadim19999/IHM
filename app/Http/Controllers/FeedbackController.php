@@ -12,38 +12,70 @@ class FeedbackController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $feedbacks = Feedback::all();
+            return response()->json($feedbacks);
+        } catch (\Exception $e) {
+            return response()->json("Problème de récupération de la liste des feedbacks", 500);
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Ajouter une nouvelle session de formation.
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $feedback = new Feedback([
+                "formationSessionID" => $request->input("formationSessionID"),
+                "candidatID" => $request->input("candidatID"),
+                "texte" => $request->input("texte")
+            ]);
+            $feedback->save();
+            return response()->json($feedback);
+        } catch (\Exception $e) {
+            return response()->json("Insertion impossible", 500);
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Afficher une session spécifique.
      */
-    public function show(Feedback $feedback)
+    public function show($id)
     {
-        //
+        try {
+            $feedback = Feedback::findOrFail($id);
+            return response()->json($feedback);
+        } catch (\Exception $e) {
+            return response()->json("Problème de récupération des données", 404);
+        }
     }
 
     /**
-     * Update the specified resource in storage.
+     * Mettre à jour une session de formation.
      */
-    public function update(Request $request, Feedback $feedback)
+    public function update(Request $request, $id)
     {
-        //
+        try {
+            $feedback = Feedback::findOrFail($id);
+            $feedback->update($request->all());
+            return response()->json($feedback);
+        } catch (\Exception $e) {
+            return response()->json("Problème de modification", 500);
+        }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprimer une session de formation.
      */
-    public function destroy(Feedback $feedback)
+    public function destroy($id)
     {
-        //
+        try {
+            $feedback = Feedback::findOrFail($id);
+            $feedback->delete();
+            return response()->json("Feedback supprimée avec succès");
+        } catch (\Exception $e) {
+            return response()->json("Problème de suppression du feedback", 500);
+        }
     }
 }

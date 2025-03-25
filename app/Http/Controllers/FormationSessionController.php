@@ -97,6 +97,12 @@ class FormationSessionController extends Controller
         return response()->json($candidats);
     }
 
+    public function getFeedbacks($formationSessionID)
+    {
+        $feedbacks = FormationSession::find($formationSessionID)->feedbacks;
+        return response()->json($feedbacks);
+    }
+
     public function registerToSession(Request $request, $sessionId)
     {
         try {

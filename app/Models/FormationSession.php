@@ -29,6 +29,11 @@ class FormationSession extends Model
         return $this->hasMany(User::class, 'formationSessionID');
     }
 
+    public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class, 'formationSessionID');
+    }
+
     public function formation()
     {
         return $this->belongsTo(Formation::class, 'formationID');
