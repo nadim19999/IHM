@@ -58,9 +58,16 @@ Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessio
 
 Route::post('/formationSessions/{sessionId}/register', [FormationSessionController::class, 'registerToSession'])->middleware('auth:api');
 
+/*
 Route::middleware('auth:api')->group(function () {
     Route::get('users/{id}', [AuthController::class, 'getUserByID']);
     Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
     Route::put('users/{id}', [AuthController::class, 'updateUser']);
     Route::post('users/{id}/block', [AuthController::class, 'blockUser']);
 });
+*/
+
+Route::get('users/{id}', [AuthController::class, 'getUserByID']);
+Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
+Route::put('users/{id}', [AuthController::class, 'updateUser']);
+Route::post('users/{id}/block', [AuthController::class, 'blockUser']);
