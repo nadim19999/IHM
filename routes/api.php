@@ -60,7 +60,7 @@ Route::post('/formationSessions/{sessionId}/register', [FormationSessionControll
 
 Route::middleware('auth:api')->group(function () {
     Route::get('users/{id}', [AuthController::class, 'getUserByID']);
-    Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole'])->middleware('role:admin');
+    Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
     Route::put('users/{id}', [AuthController::class, 'updateUser']);
-    Route::post('users/{id}/block', [AuthController::class, 'blockUser'])->middleware('role:admin');
+    Route::post('users/{id}/block', [AuthController::class, 'blockUser']);
 });

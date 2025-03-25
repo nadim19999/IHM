@@ -221,13 +221,6 @@ class AuthController extends Controller
             ], 404);
         }
 
-        if (Auth::user()->role !== 'admin' && Auth::id() !== $id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Vous n\'avez pas l\'autorisation d\'accéder à cet utilisateur.',
-            ], 403);
-        }
-
         return response()->json([
             'success' => true,
             'user' => $user,
@@ -242,13 +235,6 @@ class AuthController extends Controller
      */
     public function getUsersByRole($role)
     {
-        if (Auth::user()->role !== 'admin') {
-            return response()->json([
-                'success' => false,
-                'message' => 'Accès interdit. Vous devez être un administrateur.',
-            ], 403);
-        }
-
         $users = User::where('role', $role)->get();
 
         if ($users->isEmpty()) {
@@ -282,12 +268,14 @@ class AuthController extends Controller
             ], 404);
         }
 
+        /*
         if (Auth::user()->role !== 'admin' && Auth::id() !== $id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Vous n\'avez pas l\'autorisation de modifier cet utilisateur.',
             ], 403);
         }
+        */
 
         $validator = Validator::make($request->all(), [
             'nom' => 'nullable|string|between:2,100',
