@@ -78,6 +78,8 @@ Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessio
 
 Route::get('/formationSessions/{formationSessionID}/feedbacks', [FormationSessionController::class, 'getFeedbacks']);
 
+Route::get('/formationSessions/{formationSessionID}/examen', [FormationSessionController::class, 'getExamen']);
+
 Route::get('/examens/{examenID}/questions', [ExamenController::class, 'getQuestions']);
 
 Route::get('/questions/{questionID}/reponses', [QuestionController::class, 'getReponses']);
@@ -96,4 +98,4 @@ Route::middleware('auth:api')->group(function () {
 Route::get('users/{id}', [AuthController::class, 'getUserByID']);
 Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
 Route::put('users/{id}', [AuthController::class, 'updateUser']);
-Route::post('users/{id}/block', [AuthController::class, 'blockUser']);
+Route::post('users/{id}/block', [AuthController::class, 'blockUser'])->middleware('auth:api');

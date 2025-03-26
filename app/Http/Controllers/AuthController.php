@@ -303,9 +303,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Bloquer un utilisateur (administrateur uniquement).
      *
-     * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function blockUser($id)
@@ -316,19 +314,18 @@ class AuthController extends Controller
                 'message' => 'Accès interdit. Vous devez être un administrateur.',
             ], 403);
         }
-
+    
         $user = User::find($id);
-
         if (!$user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Utilisateur introuvable',
             ], 404);
         }
-
+    
         $user->isActive = false;
         $user->save();
-
+    
         return response()->json([
             'success' => true,
             'message' => 'Utilisateur bloqué avec succès.',

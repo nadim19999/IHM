@@ -38,4 +38,9 @@ class FormationSession extends Model
     {
         return $this->belongsTo(Formation::class, 'formationID');
     }
+
+    public function examen()
+    {
+        return $this->hasOne(Examen::class, 'formationSessionID');
+    }
 }

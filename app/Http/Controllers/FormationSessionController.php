@@ -103,6 +103,20 @@ class FormationSessionController extends Controller
         return response()->json($feedbacks);
     }
 
+    public function getExamen($formationSessionID)
+    {
+        $formationSession = FormationSession::find($formationSessionID);
+
+        if (!$formationSession) {
+            return response()->json(['message' => 'Session de formation non trouvée'], 404);
+        }
+
+        $examen = $formationSession->examen;
+
+        return response()->json($examen);
+    }
+
+
     public function registerToSession(Request $request, $sessionId)
     {
         try {
