@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Certificat;
 use App\Models\Examen;
 use App\Models\FormationSession;
 use App\Models\SessionProgression;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -134,39 +136,52 @@ class ExamenController extends Controller
                 return response()->json(['message' => 'Utilisateur non authentifié'], 401);
             }
 
-            // Récupérer l'examen
             $examen = Examen::findOrFail($examenID);
-            $questions = $examen->questions()->with('reponses')->get();
+            $questions = $examen->questions;
 
-            // Récupérer les réponses envoyées par l'utilisateur
-            $reponsesUtilisateur = $request->input('reponses'); // Tableau [questionID => [reponseID1, reponseID2]]
+            $reponsesUtilisateur = $request->input('reponses');
 
             $score = 0;
-            $totalQuestions = $questions->count();
+            $totalNotes = 0;
 
             foreach ($questions as $question) {
-                // Récupérer les bonnes réponses de la base de données
-                $bonnesReponses = $question->reponses->where('correcte', true)->pluck('id')->toArray();
+                $bonnesReponses = $question->reponses->where('statut', true)->pluck('id')->toArray();
 
-                // Récupérer les réponses de l'utilisateur pour cette question
                 $reponsesUser = isset($reponsesUtilisateur[$question->id]) ? $reponsesUtilisateur[$question->id] : [];
 
-                // Vérifier si les réponses de l'utilisateur sont correctes
-                sort($bonnesReponses);
-                sort($reponsesUser);
-
                 if ($bonnesReponses === $reponsesUser) {
-                    $score++; // Score complet si toutes les réponses sont justes
+                    $score += $question->note;
+                }
+
+                $totalNotes += $question->note;
+            }
+
+            $pourcentage = ($totalNotes > 0) ? ($score / $totalNotes) * 100 : 0;
+            $certificatCree = false;
+
+            if ($pourcentage >= 70) {
+                $certificatExistant = Certificat::where('candidatID', $user->id)
+                    ->where('formationSessionID', $examen->formationSessionID)
+                    ->first();
+
+                if (!$certificatExistant) {
+                    Certificat::create([
+                        'dateObtention' => Carbon::now(),
+                        'note' => $score,
+                        'statut' => 'validé',
+                        'formationSessionID' => $examen->formationSessionID,
+                        'candidatID' => $user->id,
+                    ]);
+                    $certificatCree = true;
                 }
             }
 
-            // Calcul du pourcentage de réussite
-            $pourcentage = ($totalQuestions > 0) ? ($score / $totalQuestions) * 100 : 0;
-
             return response()->json([
                 'score' => $score,
-                'total_questions' => $totalQuestions,
-                'pourcentage' => $pourcentage
+                'total_notes' => $totalNotes,
+                'pourcentage' => $pourcentage,
+                'certificat_cree' => $certificatCree,
+                'message' => $certificatCree ? 'Félicitations ! Certificat généré.' : 'Examen terminé, pas de certificat attribué.'
             ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Erreur lors du calcul du score', 'error' => $e->getMessage()], 500);

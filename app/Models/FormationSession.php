@@ -30,7 +30,17 @@ class FormationSession extends Model
         return $this->hasMany(User::class, 'formationSessionID');
     }
 
+    public function certificats()
+    {
+        return $this->hasMany(User::class, 'formationSessionID');
+    }
+
     public function feedbacks()
+    {
+        return $this->hasMany(Feedback::class, 'formationSessionID');
+    }
+
+    public function progressions()
     {
         return $this->hasMany(Feedback::class, 'formationSessionID');
     }

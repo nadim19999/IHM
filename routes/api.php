@@ -6,6 +6,7 @@ use App\Http\Controllers\SousCategorieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CertificatController;
 use App\Http\Controllers\CourController;
 use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\FeedbackController;
@@ -81,6 +82,10 @@ Route::get('/formationSessions/{formationSessionID}/feedbacks', [FormationSessio
 
 Route::get('/formationSessions/{formationSessionID}/examen', [FormationSessionController::class, 'getExamen']);
 
+Route::get('/formationSessions/{formationSessionID}/certificats', [FormationSessionController::class, 'getCertificats']);
+
+Route::get('/formationSessions/{formationSessionID}/progressions', [FormationSessionController::class, 'getProgressions']);
+
 Route::get('/examens/{examenID}/questions', [ExamenController::class, 'getQuestions']);
 
 Route::get('/questions/{questionID}/reponses', [QuestionController::class, 'getReponses']);
@@ -107,4 +112,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('sessions/{formationSessionID}/passer-examen', [ExamenController::class, 'passerExamen']);
 });
 
-Route::post('/examen/{formationSessionID}/evaluer', [ExamenController::class, 'calculerScore'])->middleware('auth:api');
+Route::post('/examen/{examenID}/evaluer', [ExamenController::class, 'calculerScore'])->middleware('auth:api');
+
+Route::get('/certificats', [CertificatController::class, 'index']);
+Route::get('/certificats/{id}', [CertificatController::class, 'show']);

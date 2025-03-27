@@ -93,6 +93,18 @@ class FormationSessionController extends Controller
         return response()->json($cours);
     }
 
+    public function getCertificats($formationSessionID)
+    {
+        $certificats = FormationSession::find($formationSessionID)->certificats;
+        return response()->json($certificats);
+    }
+
+    public function getProgressions($formationSessionID)
+    {
+        $progressions = FormationSession::find($formationSessionID)->progressions;
+        return response()->json($progressions);
+    }
+
     public function getCandidats($formationSessionID)
     {
         $candidats = FormationSession::find($formationSessionID)->candidats;

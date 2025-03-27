@@ -8,42 +8,25 @@ use Illuminate\Http\Request;
 class CertificatController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Afficher la liste des certificats.
      */
     public function index()
     {
-        //
+        $certificats = Certificat::with(['formationSession', 'candidat'])->get();
+        return response()->json($certificats);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Afficher un certificat spécifique.
      */
-    public function store(Request $request)
+    public function show($id)
     {
-        //
-    }
+        $certificat = Certificat::with(['formationSession', 'candidat'])->find($id);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Certificat $certificat)
-    {
-        //
-    }
+        if (!$certificat) {
+            return response()->json(['message' => 'Certificat non trouvé'], 404);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Certificat $certificat)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Certificat $certificat)
-    {
-        //
+        return response()->json($certificat);
     }
 }
