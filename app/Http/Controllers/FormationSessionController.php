@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FormationSession;
+use App\Models\SessionProgression;
 use App\Models\User;
 
 class FormationSessionController extends Controller
@@ -36,6 +37,7 @@ class FormationSessionController extends Controller
                 "statut" => $request->input("statut"),
                 "capacite" => $request->input("capacite"),
                 "nombreInscrits" => 0,
+                "nombreCours" => $request->input("nombreCours")
             ]);
             $session->save();
             return response()->json($session);
@@ -145,7 +147,22 @@ class FormationSessionController extends Controller
 
             $session->increment('nombreInscrits');
 
-            return response()->json(['message' => 'Inscription réussie', 'user' => $user], 200);
+            $progression = SessionProgression::where('candidatID', $user->id)
+                ->where('formationSessionID', $sessionId)
+                ->first();
+
+            if (!$progression) {
+                \App\Models\SessionProgression::create([
+                    'candidatID' => $user->id,
+                    'formationSessionID' => $sessionId,
+                    'progression' => 0
+                ]);
+            }
+
+            return response()->json([
+                'message' => 'Inscription réussie et progression créée',
+                'user' => $user
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Problème d\'inscription', 'details' => $e->getMessage()], 500);
         }

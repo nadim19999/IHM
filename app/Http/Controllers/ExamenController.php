@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Examen;
+use App\Models\FormationSession;
+use App\Models\SessionProgression;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ExamenController extends Controller
 {
@@ -90,6 +93,83 @@ class ExamenController extends Controller
             return response()->json($questions);
         } catch (\Exception $e) {
             return response()->json("Problème de récupération des questions");
+        }
+    }
+
+    public function passerExamen($formationSessionID)
+    {
+        $progression = SessionProgression::where('candidatID', Auth::id())
+            ->where('formationSessionID', $formationSessionID)
+            ->first();
+
+        if (!$progression) {
+            return response()->json(['message' => 'Aucune progression trouvée'], 404);
+        }
+
+        $formationSession = FormationSession::findOrFail($formationSessionID);
+
+        if ($progression->progression < $formationSession->nombreCours) {
+            return response()->json(['message' => 'Vous n\'avez pas encore terminé la formation'], 403);
+        }
+
+        $examen = Examen::where('formationSessionID', $formationSessionID)->first();
+
+        if (!$examen) {
+            return response()->json(['message' => 'Aucun examen trouvé pour cette formation'], 404);
+        }
+
+        $questions = $examen->questions()->with(['reponses' => function ($query) {
+            $query->select('id', 'questionID', 'texte');
+        }])->get();
+
+        return response()->json(['examen' => $examen, 'questions' => $questions]);
+    }
+
+    public function calculerScore(Request $request, $examenID)
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json(['message' => 'Utilisateur non authentifié'], 401);
+            }
+
+            // Récupérer l'examen
+            $examen = Examen::findOrFail($examenID);
+            $questions = $examen->questions()->with('reponses')->get();
+
+            // Récupérer les réponses envoyées par l'utilisateur
+            $reponsesUtilisateur = $request->input('reponses'); // Tableau [questionID => [reponseID1, reponseID2]]
+
+            $score = 0;
+            $totalQuestions = $questions->count();
+
+            foreach ($questions as $question) {
+                // Récupérer les bonnes réponses de la base de données
+                $bonnesReponses = $question->reponses->where('correcte', true)->pluck('id')->toArray();
+
+                // Récupérer les réponses de l'utilisateur pour cette question
+                $reponsesUser = isset($reponsesUtilisateur[$question->id]) ? $reponsesUtilisateur[$question->id] : [];
+
+                // Vérifier si les réponses de l'utilisateur sont correctes
+                sort($bonnesReponses);
+                sort($reponsesUser);
+
+                if ($bonnesReponses === $reponsesUser) {
+                    $score++; // Score complet si toutes les réponses sont justes
+                }
+            }
+
+            // Calcul du pourcentage de réussite
+            $pourcentage = ($totalQuestions > 0) ? ($score / $totalQuestions) * 100 : 0;
+
+            return response()->json([
+                'score' => $score,
+                'total_questions' => $totalQuestions,
+                'pourcentage' => $pourcentage
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erreur lors du calcul du score', 'error' => $e->getMessage()], 500);
         }
     }
 }

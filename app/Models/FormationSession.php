@@ -15,6 +15,7 @@ class FormationSession extends Model
         'statut',
         'capacite',
         'nombreInscrits',
+        'nombreCours',
         'formationID',
         'formateurID'
     ];

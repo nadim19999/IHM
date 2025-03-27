@@ -12,6 +12,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\FormationSessionController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\ReponseController;
+use App\Http\Controllers\SessionProgressionController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -99,3 +100,11 @@ Route::get('users/{id}', [AuthController::class, 'getUserByID']);
 Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
 Route::put('users/{id}', [AuthController::class, 'updateUser']);
 Route::post('users/{id}/block', [AuthController::class, 'blockUser'])->middleware('auth:api');
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('sessions/{formationSessionID}/progression', [SessionProgressionController::class, 'show']);
+    Route::post('sessions/{formationSessionID}/progression/update', [SessionProgressionController::class, 'update']);
+    Route::get('sessions/{formationSessionID}/passer-examen', [ExamenController::class, 'passerExamen']);
+});
+
+Route::post('/examen/{formationSessionID}/evaluer', [ExamenController::class, 'calculerScore'])->middleware('auth:api');
