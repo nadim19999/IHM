@@ -105,7 +105,7 @@ Route::get('users/{id}', [AuthController::class, 'getUserByID']);
 Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
 Route::put('users/{id}', [AuthController::class, 'updateUser']);
 Route::post('users/{id}/block', [AuthController::class, 'blockUser'])->middleware('auth:api');
-Route::post('users/certificats', [AuthController::class, 'getCertificats'])->middleware('auth:api');
+Route::get('users/certificats', [AuthController::class, 'getCertificats'])->middleware('auth:api');
 
 Route::middleware('auth:api')->group(function () {
     Route::get('formationSessions/{formationSessionID}/progression', [SessionProgressionController::class, 'show']);
