@@ -32,7 +32,7 @@ class FormationSession extends Model
 
     public function certificats()
     {
-        return $this->hasMany(User::class, 'formationSessionID');
+        return $this->hasMany(Certificat::class, 'formationSessionID');
     }
 
     public function feedbacks()
