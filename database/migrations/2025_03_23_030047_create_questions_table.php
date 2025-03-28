@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->string('titre');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->decimal('note', 4, 2);
             $table->string('type');
             $table->foreignId('examenID')->constrained('examens')->onDelete('cascade');

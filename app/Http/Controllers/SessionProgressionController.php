@@ -29,14 +29,35 @@ class SessionProgressionController extends Controller
      */
     public function update(Request $request, $formationSessionID)
     {
-        $progression = SessionProgression::firstOrCreate([
-            'candidatID' => Auth::id(),
-            'formationSessionID' => $formationSessionID,
+        $userID = Auth::id();
+        $newCourID = $request->input('courID');
+
+        $progression = SessionProgression::where('candidatID', $userID)
+            ->where('formationSessionID', $formationSessionID)
+            ->first();
+
+        if (!$progression) {
+            return response()->json([
+                'message' => 'Aucune progression trouvée pour cette session',
+            ], 404);
+        }
+
+        $courIDs = json_decode($progression->courIDs, true);
+
+        if (!in_array($newCourID, $courIDs)) {
+            array_push($courIDs, $newCourID);
+            $progression->courIDs = json_encode($courIDs);
+            $progression->progression = count($courIDs);
+            $progression->save();
+            return response()->json([
+                'message' => 'Progression mise à jour avec succès',
+                'progression' => $progression->progression,
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Le cours est déjà enregistré dans la progression.',
+            'progression' => $progression->progression,
         ]);
-
-        $progression->progression += $request->progression;
-        $progression->save();
-
-        return response()->json(['message' => 'Progression mise à jour avec succès', 'progression' => $progression]);
     }
 }

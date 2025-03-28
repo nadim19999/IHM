@@ -107,9 +107,9 @@ Route::put('users/{id}', [AuthController::class, 'updateUser']);
 Route::post('users/{id}/block', [AuthController::class, 'blockUser'])->middleware('auth:api');
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('sessions/{formationSessionID}/progression', [SessionProgressionController::class, 'show']);
-    Route::post('sessions/{formationSessionID}/progression/update', [SessionProgressionController::class, 'update']);
-    Route::get('sessions/{formationSessionID}/passer-examen', [ExamenController::class, 'passerExamen']);
+    Route::get('formationSessions/{formationSessionID}/progression', [SessionProgressionController::class, 'show']);
+    Route::post('formationSessions/{formationSessionID}/progression/update', [SessionProgressionController::class, 'update']);
+    Route::get('formationSessions/{formationSessionID}/passer-examen', [ExamenController::class, 'passerExamen']);
 });
 
 Route::post('/examen/{examenID}/evaluer', [ExamenController::class, 'calculerScore'])->middleware('auth:api');

@@ -137,6 +137,23 @@ class ExamenController extends Controller
             }
 
             $examen = Examen::findOrFail($examenID);
+            $formationSessionID = $examen->formationSessionID;
+
+            // Vérifier la progression de l'utilisateur dans cette session de formation
+            $progression = SessionProgression::where('candidatID', $user->id)
+                ->where('formationSessionID', $formationSessionID)
+                ->first();
+
+            if (!$progression) {
+                return response()->json(['message' => 'Aucune progression trouvée pour cette session'], 404);
+            }
+
+            $formationSession = FormationSession::findOrFail($formationSessionID);
+
+            if ($progression->progression < $formationSession->nombreCours) {
+                return response()->json(['message' => 'Vous n\'avez pas encore terminé la formation'], 403);
+            }
+
             $questions = $examen->questions;
 
             $reponsesUtilisateur = $request->input('reponses');
@@ -161,7 +178,7 @@ class ExamenController extends Controller
 
             if ($pourcentage >= 70) {
                 $certificatExistant = Certificat::where('candidatID', $user->id)
-                    ->where('formationSessionID', $examen->formationSessionID)
+                    ->where('formationSessionID', $formationSessionID)
                     ->first();
 
                 if (!$certificatExistant) {
@@ -169,7 +186,7 @@ class ExamenController extends Controller
                         'dateObtention' => Carbon::now(),
                         'note' => $score,
                         'statut' => 'validé',
-                        'formationSessionID' => $examen->formationSessionID,
+                        'formationSessionID' => $formationSessionID,
                         'candidatID' => $user->id,
                     ]);
                     $certificatCree = true;

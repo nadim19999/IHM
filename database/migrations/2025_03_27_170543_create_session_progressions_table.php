@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('candidatID')->constrained('users')->onDelete('cascade');
             $table->foreignId('formationSessionID')->constrained('formation_sessions')->onDelete('cascade');
             $table->unsignedInteger('progression')->default(0);
+            $table->json('courIDs')->nullable();
             $table->timestamps();
         });
     }

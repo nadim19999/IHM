@@ -167,7 +167,8 @@ class FormationSessionController extends Controller
                 \App\Models\SessionProgression::create([
                     'candidatID' => $user->id,
                     'formationSessionID' => $sessionId,
-                    'progression' => 0
+                    'progression' => 0,
+                    'courIDs' => []
                 ]);
             }
 

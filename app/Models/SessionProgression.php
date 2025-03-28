@@ -15,6 +15,10 @@ class SessionProgression extends Model
         'progression'
     ];
 
+    protected $casts = [
+        'courIDs' => 'array',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'candidatID');

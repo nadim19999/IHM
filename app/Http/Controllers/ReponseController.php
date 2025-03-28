@@ -30,10 +30,8 @@ class ReponseController extends Controller
             $question = Question::findOrFail($request->input("questionID"));
             $statut = $request->input("statut");
 
-            // Vérifier si la réponse est correcte (statut = true)
             if ($statut) {
                 if ($question->type !== "multiple") {
-                    // Vérifier s'il existe déjà une réponse correcte pour cette question
                     $existingCorrectAnswer = Reponse::where('questionID', $question->id)->where('statut', true)->exists();
                     if ($existingCorrectAnswer) {
                         return response()->json("Cette question n'accepte qu'une seule bonne réponse", 400);
@@ -41,7 +39,6 @@ class ReponseController extends Controller
                 }
             }
 
-            // Ajouter la réponse
             $reponse = new Reponse([
                 "texte" => $request->input("texte"),
                 "statut" => $statut,
