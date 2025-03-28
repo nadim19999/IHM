@@ -72,4 +72,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function certificats()
+    {
+        return $this->hasMany(User::class, 'candidatID');
+    }
 }

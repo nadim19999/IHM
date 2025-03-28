@@ -331,4 +331,11 @@ class AuthController extends Controller
             'message' => 'Utilisateur bloqué avec succès.',
         ]);
     }
+
+    public function getCertificats()
+    {
+        $user = Auth::user();
+        $certificats = User::find($user->id)->certificats;
+        return response()->json($certificats);
+    }
 }
