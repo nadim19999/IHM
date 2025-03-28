@@ -42,7 +42,7 @@ class SessionProgressionController extends Controller
             ], 404);
         }
 
-        $courIDs = json_decode($progression->courIDs, true);
+        $courIDs = $progression->courIDs ? json_decode($progression->courIDs, true) : [];
 
         if (!in_array($newCourID, $courIDs)) {
             array_push($courIDs, $newCourID);
