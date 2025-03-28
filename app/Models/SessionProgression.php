@@ -12,7 +12,8 @@ class SessionProgression extends Model
     protected $fillable = [
         'candidatID',
         'formationSessionID',
-        'progression'
+        'progression',
+        'courIDS'
     ];
 
     protected $casts = [
