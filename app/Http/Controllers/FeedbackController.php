@@ -70,6 +70,10 @@ class FeedbackController extends Controller
      */
     public function destroy($id)
     {
+        $user = request()->user();
+        if (!$user || $user->role != 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
         try {
             $feedback = Feedback::findOrFail($id);
             $feedback->delete();

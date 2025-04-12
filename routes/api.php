@@ -31,27 +31,27 @@ Route::middleware('api')->group(function () {
     Route::resource('formations', FormationController::class);
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('formationSessions', FormationSessionController::class);
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('feedbacks', FeedbackController::class);
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('examens', ExamenController::class);
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('questions', QuestionController::class);
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('reponses', ReponseController::class);
 });
 
-Route::middleware('api')->group(function () {
+Route::middleware('auth:api')->group(function () {
     Route::resource('cours', CourController::class);
 });
 
@@ -63,6 +63,9 @@ Route::group([
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refreshToken', [AuthController::class, 'refresh']);
+});
+
+Route::middleware('auth:api')->prefix('users')->group(function () {
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
 });
 
@@ -72,23 +75,23 @@ Route::get('/categories/{categorieID}/sousCategories', [CategorieController::cla
 
 Route::get('/sousCategories/{sousCategorieID}/formations', [SousCategorieController::class, 'getFormations']);
 
-Route::get('/formations/{formationID}/formationSessions', [FormationController::class, 'getFormationSessions']);
+Route::get('/formations/{formationID}/formationSessions', [FormationController::class, 'getFormationSessions'])->middleware('auth:api');
 
-Route::get('/formationSessions/{formationSessionID}/cours', [FormationSessionController::class, 'getCours']);
+Route::get('/formationSessions/{formationSessionID}/cours', [FormationSessionController::class, 'getCours'])->middleware('auth:api');
 
-Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessionController::class, 'getCandidats']);
+Route::get('/formationSessions/{formationSessionID}/candidats', [FormationSessionController::class, 'getCandidats'])->middleware('auth:api');
 
-Route::get('/formationSessions/{formationSessionID}/feedbacks', [FormationSessionController::class, 'getFeedbacks']);
+Route::get('/formationSessions/{formationSessionID}/feedbacks', [FormationSessionController::class, 'getFeedbacks'])->middleware('auth:api');
 
-Route::get('/formationSessions/{formationSessionID}/examen', [FormationSessionController::class, 'getExamen']);
+Route::get('/formationSessions/{formationSessionID}/examen', [FormationSessionController::class, 'getExamen'])->middleware('auth:api');
 
-Route::get('/formationSessions/{formationSessionID}/certificats', [FormationSessionController::class, 'getCertificats']);
+Route::get('/formationSessions/{formationSessionID}/certificats', [FormationSessionController::class, 'getCertificats'])->middleware('auth:api');
 
-Route::get('/formationSessions/{formationSessionID}/progressions', [FormationSessionController::class, 'getProgressions']);
+Route::get('/formationSessions/{formationSessionID}/progressions', [FormationSessionController::class, 'getProgressions'])->middleware('auth:api');
 
-Route::get('/examens/{examenID}/questions', [ExamenController::class, 'getQuestions']);
+Route::get('/examens/{examenID}/questions', [ExamenController::class, 'getQuestions'])->middleware('auth:api');
 
-Route::get('/questions/{questionID}/reponses', [QuestionController::class, 'getReponses']);
+Route::get('/questions/{questionID}/reponses', [QuestionController::class, 'getReponses'])->middleware('auth:api');
 
 Route::post('/formationSessions/{sessionId}/register', [FormationSessionController::class, 'registerToSession'])->middleware('auth:api');
 
@@ -101,9 +104,9 @@ Route::middleware('auth:api')->group(function () {
 });
 */
 
-Route::get('users/{id}', [AuthController::class, 'getUserByID']);
-Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole']);
-Route::put('users/{id}', [AuthController::class, 'updateUser']);
+Route::get('users/{id}', [AuthController::class, 'getUserByID'])->middleware('auth:api');
+Route::get('users/role/{role}', [AuthController::class, 'getUsersByRole'])->middleware('auth:api');
+Route::put('users/{id}', [AuthController::class, 'updateUser'])->middleware('auth:api');
 Route::post('users/{id}/block', [AuthController::class, 'blockUser'])->middleware('auth:api');
 Route::get('userscertificats', [AuthController::class, 'getCertificats'])->middleware('auth:api');
 
@@ -115,5 +118,5 @@ Route::middleware('auth:api')->group(function () {
 
 Route::post('/examen/{examenID}/evaluer', [ExamenController::class, 'calculerScore'])->middleware('auth:api');
 
-Route::get('/certificats', [CertificatController::class, 'index']);
-Route::get('/certificats/{id}', [CertificatController::class, 'show']);
+Route::get('/certificats', [CertificatController::class, 'index'])->middleware('auth:api');
+Route::get('/certificats/{id}', [CertificatController::class, 'show'])->middleware('auth:api');

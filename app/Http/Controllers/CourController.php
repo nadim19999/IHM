@@ -25,6 +25,10 @@ class CourController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->user() || !in_array($request->user()->role, ['admin', 'formateur'])) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+        
         try {
             $cours = new Cour([
                 "titre" => $request->input("titre"),
@@ -57,6 +61,10 @@ class CourController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!$request->user() || !in_array($request->user()->role, ['admin', 'formateur'])) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+        
         try {
             $cours = Cour::findOrFail($id);
             $cours->update($request->all());
@@ -71,6 +79,11 @@ class CourController extends Controller
      */
     public function destroy($id)
     {
+        $user = request()->user();
+        if (!$user || !in_array($user->role, ['admin', 'formateur'])) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         try {
             $cours = Cour::findOrFail($id);
             $cours->delete();

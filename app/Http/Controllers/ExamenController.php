@@ -30,6 +30,10 @@ class ExamenController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->user() || !in_array($request->user()->role, ['admin', 'formateur'])) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+        
         try {
             $examen = new Examen([
                 "titre" => $request->input("titre"),
@@ -62,6 +66,10 @@ class ExamenController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!$request->user() || !in_array($request->user()->role, ['admin', 'formateur'])) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+        
         try {
             $examen = Examen::findOrFail($id);
             $examen->update($request->all());
@@ -76,6 +84,11 @@ class ExamenController extends Controller
      */
     public function destroy($id)
     {
+        $user = request()->user();
+        if (!$user || !in_array($user->role, ['admin', 'formateur'])) {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+        
         try {
             $examen = Examen::findOrFail($id);
             $examen->delete();

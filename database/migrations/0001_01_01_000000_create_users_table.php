@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('adresseMail')->unique();
             $table->string('password');
             $table->string('role');
-            $table->string('avatar')->default("https://asset.cloudinary.com/dlj8nno5x/2ed9f9238a2e7028b53c6e04b252212b")->nullable();
+            $table->string('avatar')->default("https://res.cloudinary.com/dlj8nno5x/image/upload/v1742758380/pic-1_azybku.jpg")->nullable();
             $table->boolean('isActive')->default(false);
 
             $table->unsignedBigInteger('formationSessionID')->nullable();

@@ -55,6 +55,11 @@ class AuthController extends Controller
      */
     public function register(Request $request)
     {
+        if (in_array($request->role, ['admin', 'formateur'])) {
+            if (!$request->user() || $request->user()->role !== 'admin') {
+                return response()->json(['error' => 'Accès non autorisé pour créer ce type de compte.'], 403);
+            }
+        }
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|between:2,100',
             'prenom' => 'required|string|between:2,100',
@@ -268,14 +273,12 @@ class AuthController extends Controller
             ], 404);
         }
 
-        /*
         if (Auth::user()->role !== 'admin' && Auth::id() !== $id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Vous n\'avez pas l\'autorisation de modifier cet utilisateur.',
             ], 403);
         }
-        */
 
         $validator = Validator::make($request->all(), [
             'nom' => 'nullable|string|between:2,100',

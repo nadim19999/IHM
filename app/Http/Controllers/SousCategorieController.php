@@ -25,6 +25,10 @@ class SousCategorieController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+        
         try {
             $sousCategorie = new SousCategorie([
                 "nomSousCategorie" => $request->input("nomSousCategorie"),
@@ -55,6 +59,10 @@ class SousCategorieController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         try {
             $sousCategorie = SousCategorie::findOrFail($id);
             $sousCategorie->update($request->all());
@@ -69,6 +77,11 @@ class SousCategorieController extends Controller
      */
     public function destroy($id)
     {
+        $user = request()->user();
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         try {
             $sousCategorie = SousCategorie::findOrFail($id);
             $sousCategorie->delete();

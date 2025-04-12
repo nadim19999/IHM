@@ -25,6 +25,10 @@ class FormationController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         try {
             $formation = new Formation([
                 "nomFormation" => $request->input("nomFormation"),
@@ -59,6 +63,10 @@ class FormationController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!$request->user() || $request->user()->role !== 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         try {
             $formation = Formation::findOrFail($id);
             $formation->update($request->all());
@@ -73,6 +81,11 @@ class FormationController extends Controller
      */
     public function destroy($id)
     {
+        $user = request()->user();
+        if (!$user || $user->role !== 'admin') {
+            return response()->json(['error' => 'Accès non autorisé'], 403);
+        }
+
         try {
             $formation = Formation::findOrFail($id);
             $formation->delete();
