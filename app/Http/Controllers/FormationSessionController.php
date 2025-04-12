@@ -28,10 +28,11 @@ class FormationSessionController extends Controller
      */
     public function store(Request $request)
     {
+        /*
         if (!$request->user() || $request->user()->role !== 'admin') {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-
+        */
         try {
             $session = new FormationSession([
                 "formationID" => $request->input("formationID"),
@@ -68,10 +69,11 @@ class FormationSessionController extends Controller
      */
     public function update(Request $request, $id)
     {
+        /*
         if (!$request->user() || $request->user()->role !== 'admin') {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-
+        */
         try {
             $session = FormationSession::findOrFail($id);
             $session->update($request->all());
@@ -86,11 +88,12 @@ class FormationSessionController extends Controller
      */
     public function destroy($id)
     {
+        /*
         $user = request()->user();
         if (!$user || $user->role !== 'admin') {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-        
+        */
         try {
             $session = FormationSession::findOrFail($id);
             $session->delete();

@@ -26,10 +26,11 @@ class ReponseController extends Controller
      */
     public function store(Request $request)
     {
+        /*
         if (!$request->user() || !in_array($request->user()->role, ['admin', 'formateur'])) {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-        
+        */
         try {
             $question = Question::findOrFail($request->input("questionID"));
             $statut = $request->input("statut");
@@ -74,10 +75,11 @@ class ReponseController extends Controller
      */
     public function update(Request $request, $id)
     {
+        /*
         if (!$request->user() || !in_array($request->user()->role, ['admin', 'formateur'])) {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-        
+        */
         try {
             $reponse = Reponse::findOrFail($id);
             $question = Question::findOrFail($reponse->questionID);
@@ -112,11 +114,12 @@ class ReponseController extends Controller
      */
     public function destroy($id)
     {
+        /*
         $user = request()->user();
         if (!$user || !in_array($user->role, ['admin', 'formateur'])) {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-
+        */
         try {
             $reponse = Reponse::findOrFail($id);
             $reponse->delete();

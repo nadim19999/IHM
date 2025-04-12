@@ -25,10 +25,11 @@ class CategorieController extends Controller
      */
     public function store(Request $request)
     {
+        /*
         if (!$request->user() || $request->user()->role !== 'admin') {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-
+        */
         try {
             $categorie = new Categorie([
                 "nomCategorie" => $request->input("nomCategorie")
@@ -58,10 +59,11 @@ class CategorieController extends Controller
      */
     public function update(Request $request, $id)
     {
+        /*
         if (!$request->user() || $request->user()->role !== 'admin') {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-
+            */
         try {
             $categorie = Categorie::findOrFail($id);
             $categorie->update($request->all());
@@ -76,11 +78,12 @@ class CategorieController extends Controller
      */
     public function destroy($id)
     {
+        /*
         $user = request()->user();
         if (!$user || $user->role !== 'admin') {
             return response()->json(['error' => 'Accès non autorisé'], 403);
         }
-
+        */
         try {
             $categorie = Categorie::findOrFail($id);
             $categorie->delete();
